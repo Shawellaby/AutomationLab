@@ -159,7 +159,17 @@ This allows clients to safely retry start events without creating duplicate exec
 
 ## Typical Execution Flow
 ```text
- Client starts job ↓ POST /start ↓ Client periodically reports liveness ↓ PUT /{externalExecutionId}/heartbeat ↓ Client finishes job ↓ PUT /{externalExecutionId}/complete
+Client starts job
+        ↓
+POST /start
+        ↓
+Client periodically reports liveness
+        ↓
+PUT /{externalExecutionId}/heartbeat
+        ↓
+Client finishes job
+        ↓
+PUT /{externalExecutionId}/complete
 ```
 
 
