@@ -173,6 +173,42 @@ PUT /{externalExecutionId}/complete
 ```
 
 
+## C# Implementation for Posting Statuses
+```csharp
+using System.Net.Http.Json;
+
+var client = new HttpClient();
+
+var url = "http://localhost:5056/api/v1/systems/EvidenceGeneration/jobs/MANUAL_EVIDENCE/executions/start";
+
+var requestBody = new
+{
+    externalExecutionId = "run-2026-09-19-001",
+    triggerSource = "Manual",
+    triggeredBy = "OutOfBandUpdate",
+    startUtc = DateTime.Parse("2026-09-19T01:00:00Z"),
+    host = new
+    {
+        machineName = "worker-02",
+        clientVersion = "1.0.0"
+    },
+    parameters = new
+    {
+        region = "us-east",
+        mode = "full"
+    }
+};
+
+var response = await client.PostAsJsonAsync(url, requestBody);
+
+var responseBody = await response.Content.ReadAsStringAsync();
+
+Console.WriteLine($"Status: {(int)response.StatusCode} {response.StatusCode}");
+Console.WriteLine(responseBody);
+
+response.EnsureSuccessStatusCode();
+```
+
 ## Development Notes
 
 ### Build
