@@ -89,7 +89,31 @@ public class Program
                 : Results.Ok(execution);
         });
 
-// 4. COMPLETE EVENT (Handles late arriving starts gracefully)
+        // 4. PARAMETERS QUERY
+        api.MapGet("/{externalExecutionId}/parameters", async ([FromRoute] string systemCode, [FromRoute] string jobCode, [FromRoute] string externalExecutionId
+            , TelemetryDbContext db) =>
+        {
+            var jobDefId = await ResolveJobDefIdAsync(systemCode, jobCode, db);
+            if (jobDefId is null)
+            {
+                return Results.NotFound(new { message = "System or Job code not registered." });
+            }
+
+            var parametersJson = await db.JobExecutions
+                .AsNoTracking()
+                .Where(e => e.JobDefId == jobDefId.Value && e.ExternalExecutionId == externalExecutionId)
+                .Select(e => e.ParametersJson)
+                .FirstOrDefaultAsync();
+
+            if (parametersJson is null)
+            {
+                return Results.NotFound(new { message = "Execution or parameters not found." });
+            }
+
+            return Results.Content(parametersJson, "application/json");
+        });
+
+// 5. COMPLETE EVENT (Handles late arriving starts gracefully)
         api.MapPut("/{externalExecutionId}/complete", async ([FromRoute] string systemCode, [FromRoute] string jobCode, [FromRoute] string externalExecutionId
             , [FromBody] CompleteExecutionRequest req, TelemetryDbContext db) =>
         {

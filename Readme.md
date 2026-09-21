@@ -130,6 +130,17 @@ Example request:
 {}
 ```
 
+
+### Parameters of an Execution
+```http
+ GET /api/v1/systems/{systemCode}/jobs/{jobCode}/executions/{externalExecutionId}/parameters
+```
+
+Example request:
+```json 
+{}
+```
+
 ### Complete an Execution
 ```http
  PUT /api/v1/systems/{systemCode}/jobs/{jobCode}/executions/{externalExecutionId}/complete
