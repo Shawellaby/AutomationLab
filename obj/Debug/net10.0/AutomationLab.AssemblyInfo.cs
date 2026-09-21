@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AutomationLab")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88230e3df9b682081c6df6643acf74e96919fb02")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+42f265f3dffbb767c81abac300986815c2dacf99")]
 [assembly: System.Reflection.AssemblyProductAttribute("AutomationLab")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AutomationLab")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
