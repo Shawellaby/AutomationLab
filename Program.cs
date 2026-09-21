@@ -57,7 +57,39 @@ public class Program
             return updated > 0 ? Results.Ok() : Results.NotFound();
         });
 
-// 3. COMPLETE EVENT (Handles late arriving starts gracefully)
+// 3. STATUS QUERY
+        api.MapGet("/{externalExecutionId}/status", async ([FromRoute] string systemCode, [FromRoute] string jobCode, [FromRoute] string externalExecutionId
+            , TelemetryDbContext db) =>
+        {
+            var jobDefId = await ResolveJobDefIdAsync(systemCode, jobCode, db);
+            if (jobDefId is null)
+            {
+                return Results.NotFound(new { message = "System or Job code not registered." });
+            }
+
+            var execution = await db.JobExecutions
+                .AsNoTracking()
+                .Where(e => e.JobDefId == jobDefId.Value && e.ExternalExecutionId == externalExecutionId)
+                .Select(e => new
+                {
+                    e.ExecutionId,
+                    e.ExternalExecutionId,
+                    e.Status,
+                    e.StartUtc,
+                    e.EndUtc,
+                    e.LastModifiedUtc,
+                    e.DurationMs,
+                    e.ErrorCode,
+                    e.ErrorMessage
+                })
+                .FirstOrDefaultAsync();
+
+            return execution is null
+                ? Results.NotFound(new { message = "Execution not found." })
+                : Results.Ok(execution);
+        });
+
+// 4. COMPLETE EVENT (Handles late arriving starts gracefully)
         api.MapPut("/{externalExecutionId}/complete", async ([FromRoute] string systemCode, [FromRoute] string jobCode, [FromRoute] string externalExecutionId
             , [FromBody] CompleteExecutionRequest req, TelemetryDbContext db) =>
         {

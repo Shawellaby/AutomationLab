@@ -120,6 +120,15 @@ Example request:
 {}
 ```
 
+### Status of an Execution
+```http
+ GET /api/v1/systems/{systemCode}/jobs/{jobCode}/executions/{externalExecutionId}/status
+```
+
+Example request:
+```json 
+{}
+```
 
 ### Complete an Execution
 ```http
@@ -159,9 +168,55 @@ This allows clients to safely retry start events without creating duplicate exec
 
 ## Typical Execution Flow
 ```text
- Client starts job ↓ POST /start ↓ Client periodically reports liveness ↓ PUT /{externalExecutionId}/heartbeat ↓ Client finishes job ↓ PUT /{externalExecutionId}/complete
+Client starts job
+        ↓
+POST /start
+        ↓
+Client periodically reports liveness
+        ↓
+PUT /{externalExecutionId}/heartbeat
+        ↓
+Client finishes job
+        ↓
+PUT /{externalExecutionId}/complete
 ```
 
+
+## C# Implementation for Posting Statuses
+```csharp
+using System.Net.Http.Json;
+
+var client = new HttpClient();
+
+var url = "http://localhost:5056/api/v1/systems/EvidenceGeneration/jobs/MANUAL_EVIDENCE/executions/start";
+
+var requestBody = new
+{
+    externalExecutionId = "run-2026-09-19-001",
+    triggerSource = "Manual",
+    triggeredBy = "OutOfBandUpdate",
+    startUtc = DateTime.Parse("2026-09-19T01:00:00Z"),
+    host = new
+    {
+        machineName = "worker-02",
+        clientVersion = "1.0.0"
+    },
+    parameters = new
+    {
+        region = "us-east",
+        mode = "full"
+    }
+};
+
+var response = await client.PostAsJsonAsync(url, requestBody);
+
+var responseBody = await response.Content.ReadAsStringAsync();
+
+Console.WriteLine($"Status: {(int)response.StatusCode} {response.StatusCode}");
+Console.WriteLine(responseBody);
+
+response.EnsureSuccessStatusCode();
+```
 
 ## Development Notes
 
