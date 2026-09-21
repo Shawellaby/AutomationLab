@@ -120,6 +120,15 @@ Example request:
 {}
 ```
 
+### Status of an Execution
+```http
+ GET /api/v1/systems/{systemCode}/jobs/{jobCode}/executions/{externalExecutionId}/status
+```
+
+Example request:
+```json 
+{}
+```
 
 ### Complete an Execution
 ```http
