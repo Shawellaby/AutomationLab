@@ -9,7 +9,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddDbContextPool<TelemetryDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AutomationLab")));
+        builder.Services.AddDbContextPool<TelemetryDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("AutomationLabLite")));
         var app = builder.Build();
         var api = app.MapGroup("/api/v1/systems/{systemCode}/jobs/{jobCode}/executions");
 
